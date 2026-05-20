@@ -34,4 +34,20 @@ class AccessControlTest extends TestCase
         $response = $this->actingAs($admin)->get('/reports');
         $response->assertStatus(200);
     }
+
+    public function test_artist_sees_only_own_tracks(): void
+    {
+        $artistA = \App\Models\Artist::factory()->create();
+        $artistB = \App\Models\Artist::factory()->create();
+        $trackA = \App\Models\Track::factory()->create(['title' => 'Only A']);
+        $trackB = \App\Models\Track::factory()->create(['title' => 'Only B']);
+        $trackA->artists()->attach($artistA->id, ['share_percent' => 100]);
+        $trackB->artists()->attach($artistB->id, ['share_percent' => 100]);
+        $userA = User::factory()->create(['role' => 'artist', 'artist_id' => $artistA->id]);
+
+        $response = $this->actingAs($userA)->get('/tracks');
+        $response->assertStatus(200);
+        $response->assertSee('Only A');
+        $response->assertDontSee('Only B');
+    }
 }

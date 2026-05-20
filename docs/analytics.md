@@ -58,3 +58,34 @@ Build a web app for a music label to track track revenues, distribute artist sha
 1. Currency format (RUB/USD).
 2. Whether report exports (CSV/PDF) are needed in MVP.
 3. Whether revenue should be manually entered or imported from external systems.
+
+## 8) Alignment to hackathon technical specification
+- Added DataLens-compatible simulator fields in revenue data: platform, country, subscription type, streams, expected/actual amount in RUB.
+- Added simulation commands and schedule:
+  - Daily data generation at 03:00 UTC.
+  - Monthly royalty generation at 04:00 UTC on day 5.
+- Added incident mechanism:
+  - Revenue deviation incident if absolute deviation exceeds 2%.
+  - Missing track-to-artist mapping incident.
+- Added manual correction mechanism:
+  - Admin can correct revenue row fields.
+  - Every correction is logged with old/new values and user id.
+  - Corrected rows are flagged and protected from simulator overwrite.
+- Added payout records and visibility for artist/admin.
+- Added strict backend data isolation:
+  - Artists can fetch only their own tracks, reports, payouts, incidents.
+- Added CSV export endpoints for normalized revenue and incidents.
+
+## 9) Current technologies used in this project
+- Backend: PHP 8.5, Laravel 13.
+- Database: SQLite (default local profile; architecture is compatible with PostgreSQL).
+- Data processing: Laravel Eloquent, Commands, Scheduler.
+- Auth and access control: Session auth, role middleware (`artist` / `admin`).
+- Frontend: Blade templates (server-rendered), vanilla CSS.
+- Build tools: Node.js, Vite, Laravel Vite Plugin.
+- Testing: PHPUnit feature tests.
+
+## 10) Gaps vs full production target
+- No real DataLens connector yet (simulator-first strategy for hackathon).
+- Export currently CSV only (Excel/PDF not yet implemented).
+- No queue broker (RabbitMQ/Kafka) in MVP; processing is synchronous.

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Artist;
+use App\Models\Incident;
+use App\Models\Payout;
 use App\Models\Report;
 use App\Models\Track;
 use Illuminate\Http\RedirectResponse;
@@ -19,7 +21,11 @@ class ReportController extends Controller
             ? Artist::orderBy('name')->get()
             : Artist::where('id', $user->artist_id)->get();
 
-        $tracks = Track::orderBy('title')->get();
+        $tracksQuery = Track::orderBy('title');
+        if (! $user->isAdmin()) {
+            $tracksQuery->whereHas('artists', fn ($q) => $q->where('artists.id', $user->artist_id));
+        }
+        $tracks = $tracksQuery->get();
 
         $reports = Report::with(['artist', 'creator'])->latest()->limit(20)->get();
 
@@ -27,10 +33,22 @@ class ReportController extends Controller
             $reports = $reports->where('artist_id', $user->artist_id)->values();
         }
 
+        $payouts = Payout::with(['artist', 'track'])->latest()->limit(30)->get();
+        if (! $user->isAdmin()) {
+            $payouts = $payouts->where('artist_id', $user->artist_id)->values();
+        }
+
+        $incidents = Incident::with(['artist', 'track'])->latest()->limit(30)->get();
+        if (! $user->isAdmin()) {
+            $incidents = $incidents->where('artist_id', $user->artist_id)->values();
+        }
+
         return view('reports.index', [
             'artists' => $artists,
             'tracks' => $tracks,
             'reports' => $reports,
+            'payouts' => $payouts,
+            'incidents' => $incidents,
         ]);
     }
 

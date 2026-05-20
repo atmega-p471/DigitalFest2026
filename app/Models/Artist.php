@@ -24,4 +24,14 @@ class Artist extends Model
     {
         return $this->hasMany(Report::class);
     }
+
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class);
+    }
+
+    public function incidents(): HasMany
+    {
+        return $this->hasMany(Incident::class);
+    }
 }

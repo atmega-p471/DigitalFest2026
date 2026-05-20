@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminShareController;
+use App\Http\Controllers\AdminDataController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
@@ -24,5 +25,12 @@ Route::middleware('auth')->group(function (): void {
 
     Route::middleware('role:admin')->group(function (): void {
         Route::post('/admin/shares', [AdminShareController::class, 'update'])->name('admin.shares.update');
+        Route::get('/admin/dashboard', [AdminDataController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('/admin/sync/daily', [AdminDataController::class, 'runDailySync'])->name('admin.sync.daily');
+        Route::post('/admin/sync/monthly', [AdminDataController::class, 'runMonthlySync'])->name('admin.sync.monthly');
+        Route::post('/admin/rates', [AdminDataController::class, 'updateRate'])->name('admin.rates.update');
+        Route::post('/admin/revenue/{entry}/adjust', [AdminDataController::class, 'manualAdjust'])->name('admin.revenue.adjust');
+        Route::get('/admin/export/revenue.csv', [AdminDataController::class, 'exportRevenueCsv'])->name('admin.export.revenue');
+        Route::get('/admin/export/incidents.csv', [AdminDataController::class, 'exportIncidentsCsv'])->name('admin.export.incidents');
     });
 });

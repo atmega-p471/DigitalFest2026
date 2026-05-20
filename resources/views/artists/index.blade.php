@@ -1,8 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1 class="title">Artist cards</h1>
-    <p class="muted">Income recalculates from current tracks and share percentages.</p>
+    <div class="card">
+        <h1 class="title">Карточки артистов</h1>
+        <p class="muted">Доход пересчитывается на основе текущих треков и долей.</p>
+    </div>
 
     <div class="grid">
         @forelse($artists as $artist)
@@ -11,11 +13,11 @@
                 <div class="muted">Stage name: {{ $artist->stage_name ?? 'n/a' }}</div>
                 <p>{{ $artist->bio }}</p>
 
-                <p><strong>Tracks:</strong></p>
+                <p><strong>Треки:</strong></p>
                 <ul>
                     @foreach($artist->tracks as $track)
                         <li>
-                            {{ $track->title }} (share {{ $track->pivot->share_percent }}%)
+                            {{ $track->title }} (доля {{ $track->pivot->share_percent }}%)
                         </li>
                     @endforeach
                 </ul>
@@ -26,11 +28,17 @@
                         $share = (float)($track->pivot->share_percent ?? 0);
                         return $gross * ($share / 100);
                     });
+                    $paid = $artist->payouts->where('status', 'paid')->sum('amount');
+                    $accrued = $artist->payouts->sum('amount');
+                    $expected = max($accrued - $paid, 0);
                 @endphp
-                <p><strong>Total artist income:</strong> {{ number_format($total, 2, '.', ' ') }} RUB</p>
+                <p><strong>Доход артиста:</strong> {{ number_format($total, 2, '.', ' ') }} RUB</p>
+                <p><strong>Начислено:</strong> {{ number_format($accrued, 2, '.', ' ') }} RUB</p>
+                <p><strong>Выплачено:</strong> {{ number_format($paid, 2, '.', ' ') }} RUB</p>
+                <p><strong>Ожидается:</strong> {{ number_format($expected, 2, '.', ' ') }} RUB</p>
             </div>
         @empty
-            <div class="card">No artists yet.</div>
+            <div class="card">Артисты пока отсутствуют.</div>
         @endforelse
     </div>
 @endsection
