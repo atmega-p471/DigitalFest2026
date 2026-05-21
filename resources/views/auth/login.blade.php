@@ -3,93 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход</title>
+    <title>Вход — Label DataHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #41354d;
+            --bg-card: rgba(75, 61, 88, 0.85);
+            --bg-input: rgba(46, 37, 56, 0.9);
+            --accent: #cff784;
+            --accent-dim: rgba(207, 247, 132, 0.14);
+            --accent-glow: rgba(207, 247, 132, 0.35);
+            --text: #f5f3f8;
+            --text-muted: rgba(245, 243, 248, 0.55);
+            --line: rgba(255, 255, 255, 0.07);
+            --radius: 14px;
+            --radius-xl: 22px;
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes glowOrb {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.1); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
         * { box-sizing: border-box; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: Inter, Segoe UI, Arial, sans-serif;
-            color: #eef3ff;
+            font-family: Onest, 'Segoe UI', system-ui, sans-serif;
+            color: var(--text);
             display: grid;
             place-items: center;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(29, 185, 84, 0.22), transparent 35%),
-                radial-gradient(circle at 82% 8%, rgba(252, 63, 29, 0.24), transparent 36%),
-                linear-gradient(140deg, #060810, #090f1e 54%, #080d18);
+            background: var(--bg);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(70px);
+            pointer-events: none;
+            animation: glowOrb 8s ease-in-out infinite;
+        }
+
+        body::before {
+            width: 400px;
+            height: 400px;
+            top: -10%;
+            left: -5%;
+            background: rgba(207, 247, 132, 0.16);
+        }
+
+        body::after {
+            width: 320px;
+            height: 320px;
+            bottom: -8%;
+            right: -5%;
+            background: rgba(207, 247, 132, 0.1);
+            animation-delay: -4s;
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            width: min(420px, calc(100vw - 32px));
+        }
+
+        .logo-mark {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius);
+            background: linear-gradient(145deg, rgba(207, 247, 132, 0.35), rgba(46, 37, 56, 0.95));
+            border: 1px solid rgba(207, 247, 132, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--accent);
+            margin-bottom: 22px;
+            box-shadow: 0 8px 32px rgba(207, 247, 132, 0.2);
+            animation: fadeSlideUp 0.6s var(--ease-out) 0.05s backwards, floatLogo 4s ease-in-out 0.6s infinite;
+        }
+
         .box {
-            width: min(440px, calc(100vw - 32px));
-            background: rgba(17, 22, 34, 0.86);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 18px;
-            padding: 22px;
-            box-shadow: 0 24px 52px rgba(0, 0, 0, 0.38);
-            backdrop-filter: blur(10px);
+            background: var(--bg-card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-xl);
+            padding: 36px 30px 30px;
+            box-shadow: 0 20px 56px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(14px);
+            animation: fadeSlideUp 0.65s var(--ease-out) 0.15s backwards;
         }
-        .logo {
-            display: inline-block;
-            margin-bottom: 8px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(29, 185, 84, 0.36);
-            background: rgba(29, 185, 84, 0.12);
-            font-size: 12px;
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 30px;
             font-weight: 700;
+            letter-spacing: -0.04em;
+            background: linear-gradient(120deg, var(--text) 0%, var(--accent) 50%, var(--text) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 5s linear infinite;
         }
-        h2 { margin: 0 0 8px; font-size: 28px; letter-spacing: 0.2px; }
-        p { margin: 0 0 14px; color: #9ca9c7; font-size: 14px; }
+
+        .subtitle {
+            margin: 0 0 28px;
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
         input {
             width: 100%;
-            padding: 11px 12px;
-            margin-bottom: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            color: #eef3ff;
+            padding: 13px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--bg-input);
+            color: var(--text);
             outline: none;
+            font-family: inherit;
+            font-size: 15px;
+            transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), transform 0.25s var(--ease-spring);
         }
+
+        input::placeholder { color: rgba(245, 243, 248, 0.32); }
+
         input:focus {
-            border-color: rgba(59, 130, 246, 0.8);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            border-color: rgba(207, 247, 132, 0.5);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+            transform: scale(1.01);
         }
+
         button {
             width: 100%;
-            padding: 11px;
-            border: 0;
-            border-radius: 10px;
+            padding: 14px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 999px;
             cursor: pointer;
-            font-weight: 700;
-            color: white;
-            background: #1db954;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 15px;
+            color: #2a2233;
+            background: var(--accent);
+            box-shadow: 0 4px 28px var(--accent-glow);
+            transition: transform 0.25s var(--ease-spring), filter 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
         }
+
+        button:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 36px var(--accent-glow);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
         .err {
-            color: #ffd2cc;
-            background: rgba(239, 68, 68, 0.18);
-            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #ffb4a8;
+            background: rgba(255, 100, 80, 0.1);
+            border: 1px solid rgba(255, 120, 100, 0.22);
             font-size: 13px;
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-bottom: 10px;
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            animation: fadeSlideUp 0.4s var(--ease-out);
         }
     </style>
 </head>
 <body>
-<div class="box">
-    <span class="logo">MUSIC ANALYTICS</span>
-    <h2>Label DataHub</h2>
-    <p>Войдите как artist или admin</p>
+<div class="wrap">
+    <div class="logo-mark">♪</div>
+    <div class="box">
+        <h2>Label DataHub</h2>
+        <p class="subtitle">Войдите как артист или администратор</p>
 
-    @if($errors->any())
-        <div class="err">{{ $errors->first() }}</div>
-    @endif
+        @if($errors->any())
+            <div class="err">{{ $errors->first() }}</div>
+        @endif
 
-    <form action="{{ route('login.store') }}" method="POST">
-        @csrf
-        <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required>
-        <input type="password" name="password" placeholder="Пароль" required>
-        <button type="submit">Войти</button>
-    </form>
+        <form action="{{ route('login.store') }}" method="POST">
+            @csrf
+            <label for="email">Эл. почта</label>
+            <input id="email" type="email" name="email" placeholder="you@label.ru" value="{{ old('email') }}" required>
+            <label for="password">Пароль</label>
+            <input id="password" type="password" name="password" placeholder="••••••••" required>
+            <button type="submit">Войти</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>

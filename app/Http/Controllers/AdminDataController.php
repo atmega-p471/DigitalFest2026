@@ -97,13 +97,15 @@ class AdminDataController extends Controller
     public function exportRevenueCsv()
     {
         $headers = [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="normalized_revenue.csv"',
         ];
 
         $callback = function (): void {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['track', 'isrc', 'date', 'platform', 'country', 'streams', 'expected_rub', 'actual_rub', 'manual_corrected']);
+            fwrite($out, "\xEF\xBB\xBF");
+            fwrite($out, "sep=;\n");
+            fputcsv($out, ['track', 'isrc', 'date', 'platform', 'country', 'streams', 'expected_rub', 'actual_rub', 'manual_corrected'], ';');
 
             RevenueEntry::with('track')->orderBy('revenue_date')->chunk(500, function ($rows) use ($out): void {
                 foreach ($rows as $row) {
@@ -117,7 +119,7 @@ class AdminDataController extends Controller
                         $row->expected_amount_rub,
                         $row->amount,
                         $row->is_manual_corrected ? 'yes' : 'no',
-                    ]);
+                    ], ';');
                 }
             });
             fclose($out);
@@ -129,13 +131,15 @@ class AdminDataController extends Controller
     public function exportIncidentsCsv()
     {
         $headers = [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="incidents.csv"',
         ];
 
         $callback = function (): void {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['id', 'type', 'message', 'deviation_percent', 'track', 'artist', 'created_at']);
+            fwrite($out, "\xEF\xBB\xBF");
+            fwrite($out, "sep=;\n");
+            fputcsv($out, ['id', 'type', 'message', 'deviation_percent', 'track', 'artist', 'created_at'], ';');
             Incident::with(['track', 'artist'])->orderByDesc('id')->chunk(500, function ($rows) use ($out): void {
                 foreach ($rows as $row) {
                     fputcsv($out, [
@@ -146,7 +150,7 @@ class AdminDataController extends Controller
                         $row->track?->title,
                         $row->artist?->name,
                         $row->created_at?->format('Y-m-d H:i:s'),
-                    ]);
+                    ], ';');
                 }
             });
             fclose($out);
